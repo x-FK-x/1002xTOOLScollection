@@ -85,7 +85,7 @@ while true; do
 
   case "$ACTION" in
     "1")
-      bash /etc/wodos/debui.sh
+      bash /etc/dodos/debui.sh
       ;;
     "2")
       exit 0
