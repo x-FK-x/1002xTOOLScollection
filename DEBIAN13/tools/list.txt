@@ -1,0 +1,4 @@
+samba
+ufw
+apache2
+nginx
