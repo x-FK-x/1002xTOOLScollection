@@ -1,15 +1,12 @@
 #!/bin/bash
 
 # === Versionserkennung ===
-if [[ -d /etc/godos ]]; then
-  VERSION="godos"
-  SCRIPT_DIR="/etc/godos"
+if [[ -d /etc/dodos ]]; then
+  VERSION="dodos"
+  SCRIPT_DIR="/etc/dodos"
 elif [[ -d /etc/modos ]]; then
   VERSION="modos"
   SCRIPT_DIR="/etc/modos"
-elif [[ -d /etc/wodos ]]; then
-  VERSION="wodos"
-  SCRIPT_DIR="/etc/wodos"
 else
   whiptail --title "Updater Error" --msgbox "No valid version directory detected. Exiting." 10 50
   exit 1

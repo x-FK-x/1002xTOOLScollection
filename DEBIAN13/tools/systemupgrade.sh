@@ -19,11 +19,6 @@ function run_cmd() {
 }
 
 echo "Starting system update..."
-# Entferne MX Linux Repo nur, wenn vorhanden
-if [[ -f /etc/apt/sources.list.d/mx.list ]]; then
-  run_cmd rm /etc/apt/sources.list.d/mx.list
-  run_cmd apt remove --purge mx-snapshot -y
-fi
 
 run_cmd apt update
 run_cmd apt upgrade -y
