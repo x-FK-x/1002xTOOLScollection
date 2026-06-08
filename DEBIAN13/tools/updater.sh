@@ -97,7 +97,7 @@ if [ -d "/etc/1002xCMD" ]; then
     fi
 else
     echo "1002xCMD is not installed. Skipping Update."
-    sleep 10
+    sleep 5
 fi
 #----
 
@@ -259,7 +259,7 @@ else
 fi
 
 
-# motd 
+# gaming 
 if [[ -f "$EXTRACTED_DIR/tools/gamingpack.sh" ]]; then
     cp -f "$EXTRACTED_DIR/tools/gamingpack.sh" "$SCRIPT_DIR/tools/gamingpack.sh"
        log "Copied gamingpack.sh to $SCRIPT_DIR/tools/gamingpack.sh"
