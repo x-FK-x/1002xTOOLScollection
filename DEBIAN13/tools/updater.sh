@@ -119,6 +119,7 @@ if ! command -v whiptail &> /dev/null; then
     fi
 fi
 
+
 if ! command -v dos2unix &> /dev/null; then
     log "dos2unix not installed. Installing..."
     sudo apt update && sudo apt install -y dos2unix | tee -a "$LOG_FILE"
@@ -127,7 +128,6 @@ if ! command -v dos2unix &> /dev/null; then
         exit 1
     fi
 fi
-
 # === Version erkennen ===
 if [[ -d /etc/dodos ]]; then
     VERSION="dodos"
@@ -161,7 +161,7 @@ fi
 
 
 # === Repo & Temp ===
-REPO="x-FK-x/1002xTOOLS"
+REPO="x-FK-x/1002xTOOLScollection"
 BRANCH="$VERSION"
 TMP_DIR="$HOME/.1002xtools_temp"
 FOLDER="DEBIAN13"
