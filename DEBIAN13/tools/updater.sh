@@ -259,15 +259,6 @@ else
 fi
 
 
-# motd 
-if [[ -f "$EXTRACTED_DIR/tools/gamingpack.sh" ]]; then
-    cp -f "$EXTRACTED_DIR/tools/gamingpack.sh" "$SCRIPT_DIR/tools/gamingpack.sh"
-       log "Copied gamingpack.sh to $SCRIPT_DIR/tools/gamingpack.sh"
-else
-    log "gamingpack.sh not found in folder."
-    whiptail --title "Updater" --msgbox "gamingpack.sh not found in folder." 10 50
-fi
-
 # osversion 
 if [[ -f "$EXTRACTED_DIR/tools/1002xSHELL-installer.sh" ]]; then
     cp -f "$EXTRACTED_DIR/tools/1002xSHELL-installer.sh" "$SCRIPT_DIR/tools/1002xSHELL-installer.sh"
