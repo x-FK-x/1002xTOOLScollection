@@ -93,7 +93,7 @@ if [ -d "/etc/1002xCMD" ]; then
             echo "Update available! Local: '$LOCAL_VERSION' vs Remote: '$REMOTE_VERSION'"
             bash "$SCRIPT_DIR/tools/1002xCMD-installer.sh" 
         fi
-        sleep 10
+        sleep 5
     fi
 else
     echo "1002xCMD is not installed. Skipping Update."
