@@ -6,3 +6,4 @@ clonezilla
 steam
 lutris
 winehq-stable
+keepass2
