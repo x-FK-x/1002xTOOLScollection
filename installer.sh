@@ -4,6 +4,8 @@
 TARGET_TOOLS_DIR="/etc/dodos/tools"
 mkdir -p "$TARGET_TOOLS_DIR"
 mkdir -p /etc/dodos/source
+echo "DEBIAN13" > /etc/dodos/tools/osversion.txt
+
 
 LOG_FILE="$TARGET_TOOLS_DIR/1002xTOOLS_updater.log"
 echo "=== 1002xTOOLS Updater Log ===" > "$LOG_FILE"
