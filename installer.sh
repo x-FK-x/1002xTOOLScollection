@@ -143,7 +143,7 @@ elif [[ -d /etc/modos ]]; then
     SCRIPT_DIR="/etc/modos"
 else
     log "No valid version directory detected. Exiting."
-    whiptail --title "Updater Error" --msgbox "No valid version directory detected. Exiting." 10 50
+    whiptail --title "Installation Error" --msgbox "No valid version directory detected. Exiting." 10 50
     exit 1
 fi
 
@@ -186,7 +186,7 @@ ZIP_FILE="$TMP_DIR/$BRANCH.zip"
 wget -q -O "$ZIP_FILE" "$ZIP_URL"
 if [[ $? -ne 0 ]]; then
     log "Failed to download $ZIP_URL"
-    whiptail --title "Updater" --msgbox "Failed to download $ZIP_URL" 10 50
+    whiptail --title "Installation" --msgbox "Failed to download $ZIP_URL" 10 50
     rm -rf "$TMP_DIR"
     exit 1
 fi
@@ -197,7 +197,7 @@ log "Extracting archive..."
 unzip -q -o "$ZIP_FILE" -d "$TMP_DIR"
 if [[ $? -ne 0 ]]; then
     log "Failed to extract archive."
-    whiptail --title "Updater" --msgbox "Failed to extract archive." 10 50
+    whiptail --title "Installation" --msgbox "Failed to extract archive." 10 50
     rm -rf "$TMP_DIR"
     exit 1
 fi
@@ -205,7 +205,7 @@ fi
 EXTRACTED_ROOT=$(find "$TMP_DIR" -maxdepth 1 -type d -name "1002xTOOLS*" | head -n1)
 if [[ ! -d "$EXTRACTED_ROOT" ]]; then
     log "Extracted repo folder not found."
-    whiptail --title "Updater" --msgbox "Extracted repo folder not found." 10 50
+    whiptail --title "Installation" --msgbox "Extracted repo folder not found." 10 50
     rm -rf "$TMP_DIR"
     exit 1
 fi
@@ -214,7 +214,7 @@ log "Extracted root: $EXTRACTED_ROOT"
 EXTRACTED_DIR="$EXTRACTED_ROOT/$FOLDER"
 if [[ ! -d "$EXTRACTED_DIR" ]]; then
     log "Folder $FOLDER not found in the repo."
-    whiptail --title "Updater" --msgbox "Folder $FOLDER not found in the repo." 10 50
+    whiptail --title "Installation" --msgbox "Folder $FOLDER not found in the repo." 10 50
     rm -rf "$TMP_DIR"
     exit 1
 fi
@@ -223,7 +223,7 @@ log "Using folder: $EXTRACTED_DIR"
 # Versionscheck
 if [[ ! -f "$EXTRACTED_DIR/dev.txt" ]]; then
     log "dev.txt not found in folder."
-    whiptail --title "Updater" --msgbox "dev.txt not found in DEBIAN13 folder." 10 50
+    whiptail --title "Installation" --msgbox "dev.txt not found in DEBIAN13 folder." 10 50
     rm -rf "$TMP_DIR"
     exit 1
 fi
@@ -241,7 +241,7 @@ log "Repo version: $REPO_VERSION"
 
 if [[ $(echo "$LOCAL_VERSION == $REPO_VERSION" | bc) -eq 1 ]]; then
     log "Tools are already up to date."
-    whiptail --title "Updater" --msgbox "Tools are already up to date (version $OS_VERSION Rev. $LOCAL_VERSION)." 10 50
+    whiptail --title "Installation" --msgbox "Tools are already up to date (version $OS_VERSION Rev. $LOCAL_VERSION)." 10 50
     rm -rf "$TMP_DIR"
     exit 0
 elif [[ $(echo "$REPO_VERSION > $LOCAL_VERSION" | bc) -eq 1 ]]; then
@@ -265,7 +265,7 @@ if [[ -f "$EXTRACTED_DIR/debui.sh" ]]; then
     log "Copied debui.sh to $SCRIPT_DIR/debui.sh"
 else
     log "DEBIANui.sh not found in folder."
-    whiptail --title "Updater" --msgbox "debui.sh not found in folder." 10 50
+    whiptail --title "Installation" --msgbox "debui.sh not found in folder." 10 50
 fi
 
 # motd 
@@ -274,7 +274,7 @@ if [[ -f "$EXTRACTED_DIR/tools/motd" ]]; then
     log "Copied motd to $SCRIPT_DIR/tools/motd"
 else
     log "motd not found in folder."
-    whiptail --title "Updater" --msgbox "motd not found in folder." 10 50
+    whiptail --title "Installation" --msgbox "motd not found in folder." 10 50
 fi
 
 # osversion 
@@ -283,7 +283,7 @@ if [[ -f "$EXTRACTED_DIR/tools/1002xSHELL-installer.sh" ]]; then
     log "Copied 1002xSHELL-installer.sh to $SCRIPT_DIR/tools/1002xSHELL-installer.sh"
 else
     log "1002xSHELL-installer.sh not found in folder."
-    whiptail --title "Updater" --msgbox "1002xSHELL-installer.sh not found in folder." 10 50
+    whiptail --title "Installation" --msgbox "1002xSHELL-installer.sh not found in folder." 10 50
 fi
 
 # list 
@@ -345,14 +345,14 @@ source /etc/bash.bashrc
 rm -rf "$TMP_DIR"
 log "Temporary files cleaned."
 
-whiptail --title "1002xTOOLS Updater" --msgbox "Update completed successfully to version $REPO_VERSION." 10 50
-log "Update completed successfully to version $REPO_VERSION."
+whiptail --title "1002xTOOLS Installer" --msgbox "Installtion  completed. If you want uninstall it, just remove /etc/dodos"" 10 50
+log "Installation completed."
 
 
 # === Rückkehrmenü ===
 while true; do
-    ACTION=$(whiptail --title "Updater finished" --menu "What do you want to do now?" 10 50 2 \
-        "1" "Return to main menu" \
+    ACTION=$(whiptail --title "Installation finished" --menu "What do you want to do now?" 10 50 2 \
+        "1" "Go to main menu" \
         "2" "Exit 1002xTOOLS" 3>&1 1>&2 2>&3)
 
     case "$ACTION" in
