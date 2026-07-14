@@ -98,7 +98,7 @@ if [ -d "/etc/1002xCMD" ]; then
     fi
 else
     echo "1002xCMD is not installed. Skipping Update."
-    sleep 5
+    sleep 2
 fi
 #----
 
