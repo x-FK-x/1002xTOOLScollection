@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# Logfile im tools-Ordner
+TARGET_TOOLS_DIR="/etc/dodos/tools"
+mkdir -p "$TARGET_TOOLS_DIR"
+mkdir -p /etc/dodos/source
+
 LOG_FILE="$TARGET_TOOLS_DIR/1002xTOOLS_updater.log"
 echo "=== 1002xTOOLS Updater Log ===" > "$LOG_FILE"
 echo "Start time: $(date)" >> "$LOG_FILE"
@@ -30,7 +36,7 @@ else
     OP_SRC=$(find "$OP_TMP" -maxdepth 1 -type d -name "1002xOPERATOR-*")
     if [[ ! -f "$OP_SRC/release.txt" ]]; then
         log "release.txt missing in repo."
-        whiptail --title "1002xOPERATOR" --msgbox "release.txt missing in repo. Update aborted." 10 50g
+        whiptail --title "1002xOPERATOR" --msgbox "release.txt missing in repo. Update aborted." 10 50
         rm -rf "$OP_TMP"
     else
         REPO_VER=$(head -n1 "$OP_SRC/release.txt")
@@ -70,23 +76,18 @@ REMOTE_URL="https://raw.githubusercontent.com/x-FK-x/1002xCMD/refs/heads/main/ve
 if [ -d "/etc/1002xCMD" ]; then
     echo "1002xCMD is installed"
     
-    
     if [ ! -f "$LOCAL_CMD_FILE" ]; then
         echo "Local version file not found. Creating a blank one."
         touch "$LOCAL_CMD_FILE"
     fi
 
- 
     REMOTE_VERSION=$(curl -sf "$REMOTE_URL")
 
-    # Prüfen, ob der curl-Befehl erfolgreich war
     if [ $? -ne 0 ] || [ -z "$REMOTE_VERSION" ]; then
         echo "Error: Could not fetch remote version."
     else
-        # 3. Inhalt der lokalen Datei auslesen
         LOCAL_VERSION=$(cat "$LOCAL_CMD_FILE")
 
-       
         if [ "$LOCAL_VERSION" = "$REMOTE_VERSION" ]; then
             echo "Versions match ($LOCAL_VERSION). No update needed."
         else
@@ -97,16 +98,10 @@ if [ -d "/etc/1002xCMD" ]; then
     fi
 else
     echo "1002xCMD is not installed. Skipping Update."
-    sleep 5
+    sleep 2
 fi
 #----
 
-
-
-# Logfile im tools-Ordner
-TARGET_TOOLS_DIR="/etc/dodos/tools"
-mkdir -p "$TARGET_TOOLS_DIR"
-mkdir -p /etc/dodos/source
 
 log "Starting updater..."
 
@@ -119,7 +114,6 @@ if ! command -v whiptail &> /dev/null; then
     fi
 fi
 
-
 if ! command -v dos2unix &> /dev/null; then
     log "dos2unix not installed. Installing..."
     sudo apt update && sudo apt install -y dos2unix | tee -a "$LOG_FILE"
@@ -128,6 +122,16 @@ if ! command -v dos2unix &> /dev/null; then
         exit 1
     fi
 fi
+
+if ! command -v bc &> /dev/null; then
+    log "bc not installed. Installing..."
+    sudo apt update && sudo apt install -y bc | tee -a "$LOG_FILE"
+    if ! command -v bc &> /dev/null; then
+        log "Failed to install bc. Exiting."
+        exit 1
+    fi
+fi
+
 # === Version erkennen ===
 if [[ -d /etc/dodos ]]; then
     VERSION="dodos"
@@ -151,7 +155,7 @@ if [ "$OS_VERSION" = "DEBIAN13" ]; then
     whiptail --title "Updater" --msgbox "DEBIAN13 installed. Continue." 10 50
 elif [ "$OS_VERSION" = "DEBIAN14" ]; then
     log "DEBIAN 14"
-  elif [ "$OS_VERSION" = "DEBIAN15" ]; then
+elif [ "$OS_VERSION" = "DEBIAN15" ]; then
     log "DEBIAN 15"
 else
     log "Unkown Version: $OS_VERSION"
@@ -159,6 +163,10 @@ else
 fi
 
 
+# === Versionsnormalisierung (Kommazahlen-kompatibel) ===
+normalize_version() {
+    echo "$1" | tr -d '[:space:]' | tr ',' '.' | grep -oE '[0-9]+(\.[0-9]+)?'
+}
 
 # === Repo & Temp ===
 REPO="x-FK-x/1002xTOOLScollection"
@@ -211,25 +219,34 @@ fi
 log "Using folder: $EXTRACTED_DIR"
 
 # Versionscheck
-if [[ -f "$EXTRACTED_DIR/dev.txt" ]]; then
-    cp -f "$EXTRACTED_DIR/dev.txt" "$TMP_DIR/dev.txt"
-    REPO_VERSION=$(head -n1 "$TMP_DIR/dev.txt")
-    log "Repo version: $REPO_VERSION"
-else
+if [[ ! -f "$EXTRACTED_DIR/dev.txt" ]]; then
     log "dev.txt not found in folder."
     whiptail --title "Updater" --msgbox "dev.txt not found in DEBIAN13 folder." 10 50
     rm -rf "$TMP_DIR"
     exit 1
 fi
 
+cp -f "$EXTRACTED_DIR/dev.txt" "$TMP_DIR/dev.txt"
 
+dos2unix "$TMP_DIR/dev.txt" 2>/dev/null
+dos2unix "$LOCAL_DEV_FILE" 2>/dev/null
 
-LOCAL_VERSION=$( [[ -f "$LOCAL_DEV_FILE" ]] && head -n1 "$LOCAL_DEV_FILE" || echo "" )
+REPO_VERSION=$(normalize_version "$(head -n1 "$TMP_DIR/dev.txt")")
+LOCAL_VERSION=$(normalize_version "$( [[ -f "$LOCAL_DEV_FILE" ]] && head -n1 "$LOCAL_DEV_FILE" || echo "0" )")
+
 log "Local version: $LOCAL_VERSION"
+log "Repo version: $REPO_VERSION"
 
-if [[ "$LOCAL_VERSION" == "$REPO_VERSION" ]]; then
+if [[ $(echo "$LOCAL_VERSION == $REPO_VERSION" | bc) -eq 1 ]]; then
     log "Tools are already up to date."
     whiptail --title "Updater" --msgbox "Tools are already up to date (version $OS_VERSION Rev. $LOCAL_VERSION)." 10 50
+    rm -rf "$TMP_DIR"
+    exit 0
+elif [[ $(echo "$REPO_VERSION > $LOCAL_VERSION" | bc) -eq 1 ]]; then
+    log "Update available: $LOCAL_VERSION -> $REPO_VERSION"
+else
+    log "Warning: Local version ($LOCAL_VERSION) is newer than repo ($REPO_VERSION)."
+    whiptail --title "Warning" --msgbox "Local version ($LOCAL_VERSION) is newer than repo ($REPO_VERSION).\nNo update performed." 10 60
     rm -rf "$TMP_DIR"
     exit 0
 fi
@@ -252,12 +269,20 @@ fi
 # motd 
 if [[ -f "$EXTRACTED_DIR/tools/motd" ]]; then
     cp -f "$EXTRACTED_DIR/tools/motd" "$SCRIPT_DIR/tools/motd"
-       log "Copied motd to $SCRIPT_DIR/tools/motd"
+    log "Copied motd to $SCRIPT_DIR/tools/motd"
 else
     log "motd not found in folder."
     whiptail --title "Updater" --msgbox "motd not found in folder." 10 50
 fi
 
+# gaming 
+if [[ -f "$EXTRACTED_DIR/tools/gamingpack.sh" ]]; then
+    cp -f "$EXTRACTED_DIR/tools/gamingpack.sh" "$SCRIPT_DIR/tools/gamingpack.sh"
+    log "Copied gamingpack.sh to $SCRIPT_DIR/tools/gamingpack.sh"
+else
+    log "gamingpack.sh not found in folder."
+    whiptail --title "Updater" --msgbox "gamingpack.sh not found in folder." 10 50
+fi
 
 # osversion 
 if [[ -f "$EXTRACTED_DIR/tools/1002xSHELL-installer.sh" ]]; then
@@ -277,9 +302,6 @@ else
     whiptail --title "Updater" --msgbox "list.txt not found in folder." 10 50
 fi
 
-
-
-
 # Alle .sh-Dateien aus DEBIAN13/tools nach tools kopieren
 if [[ -d "$EXTRACTED_DIR/tools" ]]; then
     for file in "$EXTRACTED_DIR/tools/"*.sh; do
@@ -294,26 +316,23 @@ fi
 
 if [[ -f "$EXTRACTED_DIR/tools/1002xCMD-ver.txt" ]]; then
     cp -f "$EXTRACTED_DIR/tools/1002xCMD-ver.txt" "$SCRIPT_DIR/tools/1002xCMD-ver.txt"
-    log "Copied list.txt to $SCRIPT_DIR/tools/1002xCMD-ver.txt"
+    log "Copied 1002xCMD-ver.txt to $SCRIPT_DIR/tools/1002xCMD-ver.txt"
 else
     log "1002xCMD-ver.txt not found in folder."
     whiptail --title "Updater" --msgbox "1002xCMD-ver.txt not found in folder." 10 50
 fi
 
-
 if [[ -f "$EXTRACTED_DIR/tools/resolv.conf" ]]; then
     cp -f "$EXTRACTED_DIR/tools/resolv.conf" "$SCRIPT_DIR/tools/resolv.conf"
-    log "Copied list.txt to $SCRIPT_DIR/tools/resolv.conf"
+    log "Copied resolv.conf to $SCRIPT_DIR/tools/resolv.conf"
 else
     log "resolv.conf not found in folder."
     whiptail --title "Updater" --msgbox "resolv.conf not found in folder." 10 50
 fi
 
-
 # Alle .sh im Ziel ausführbar machen
 sudo find "$SCRIPT_DIR" -type f -name "*.sh" -exec chmod +x {} +
 sudo find "$SCRIPT_DIR" -type f -name "*.sh" -exec dos2unix {} +
-
 
 ALIAS_LINE="alias 1002xUPDATES='sudo bash $SCRIPT_DIR/tools/updater.sh'"
 ALIAS_LINE2="alias 1002xTOOLS='sudo bash $SCRIPT_DIR/debui.sh'"
@@ -335,8 +354,6 @@ log "Temporary files cleaned."
 
 whiptail --title "1002xTOOLS Updater" --msgbox "Update completed successfully to version $REPO_VERSION." 10 50
 log "Update completed successfully to version $REPO_VERSION."
-
-
 
 
 # === Rückkehrmenü ===
