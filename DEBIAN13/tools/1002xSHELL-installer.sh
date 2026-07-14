@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # === Release Version (ANPASSEN) ===
-RELEASE_VERSION="4"          # 0 … 999
+RELEASE_VERSION=""          # 0 … 999
 SHELL_SCRIPT="v${RELEASE_VERSION}.sh"
 
 # === URLs ===
@@ -73,8 +73,8 @@ else
     sudo tee -a /etc/bash.bashrc > /dev/null <<'EOF'
 
 # 1002xSHELL AUTOLOAD
-if [[ -f /etc/1002xSHELL/v4.sh ]]; then
-    source /etc/1002xSHELL/v4.sh
+if [[ -f /etc/1002xSHELL/v5.sh ]]; then
+    source /etc/1002xSHELL/v5.sh
 fi
 EOF
 fi
