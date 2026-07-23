@@ -22,6 +22,7 @@ if whiptail --title "Gamingpack Installation" --yesno "Do you really want to ins
     sudo apt install -y gamemode libgamemode0 libgamemodeauto0
 
     echo "Installation finished. Exiting.."
+    echo "Use the Steam-Installer to get Steam."
     sleep 10
     exit 0
 else
