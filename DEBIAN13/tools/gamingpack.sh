@@ -8,7 +8,7 @@ if whiptail --title "Gamingpack Installation" --yesno "Do you really want to ins
         joystick jstest-gtk antimicrox \
         xboxdrv steam-devices
 
-    sudo apt install -y lutris steam winehq-stable
+    sudo apt install -y lutris steam-installer winehq-stable
 
     sudo apt install -y gamemode libgamemode0 libgamemodeauto0
 
