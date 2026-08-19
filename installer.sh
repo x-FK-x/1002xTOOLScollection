@@ -1,5 +1,14 @@
 #!/bin/bash
 
+if ! command -v unzip &> /dev/null; then
+    log "unzip not installed. Installing..."
+    sudo apt update && sudo apt install -y unzip | tee -a "$LOG_FILE"
+    if ! command -v unzip &> /dev/null; then
+        log "Failed to install unzip. Exiting."
+        exit 1
+    fi
+fi
+
 # Logfile im tools-Ordner
 TARGET_TOOLS_DIR="/etc/dodos/tools"
 mkdir -p "$TARGET_TOOLS_DIR"
