@@ -1,5 +1,18 @@
 #!/bin/bash
 
+TARGET_TOOLS_DIR="/etc/dodos/tools"
+mkdir -p "$TARGET_TOOLS_DIR"
+mkdir -p /etc/dodos/source
+echo "DEBIAN13" > /etc/dodos/tools/osversion.txt
+
+
+LOG_FILE="$TARGET_TOOLS_DIR/1002xTOOLS_updater.log"
+echo "=== 1002xTOOLS Updater Log ===" > "$LOG_FILE"
+echo "Start time: $(date)" >> "$LOG_FILE"
+log() {
+    echo "$1" | tee -a "$LOG_FILE"
+}
+
 if ! command -v unzip &> /dev/null; then
     log "unzip not installed. Installing..."
     sudo apt update && sudo apt install -y unzip | tee -a "$LOG_FILE"
@@ -9,10 +22,6 @@ if ! command -v unzip &> /dev/null; then
     fi
 fi
 
-TARGET_TOOLS_DIR="/etc/dodos/tools"
-mkdir -p "$TARGET_TOOLS_DIR"
-mkdir -p /etc/dodos/source
-echo "DEBIAN13" > /etc/dodos/tools/osversion.txt
 
 
 # ==============================
