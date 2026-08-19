@@ -16,14 +16,6 @@ mkdir -p /etc/dodos/source
 echo "DEBIAN13" > /etc/dodos/tools/osversion.txt
 
 
-LOG_FILE="$TARGET_TOOLS_DIR/1002xTOOLS_updater.log"
-echo "=== 1002xTOOLS Updater Log ===" > "$LOG_FILE"
-echo "Start time: $(date)" >> "$LOG_FILE"
-log() {
-    echo "$1" | tee -a "$LOG_FILE"
-}
-
-
 # ==============================
 # 1002xOPERATOR Update (autonom)
 # ==============================
