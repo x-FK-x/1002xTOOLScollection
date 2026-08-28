@@ -1,3 +1,6 @@
+firefox-esr
+vlc
+libreoffice
 samba
 ufw
 apache2
