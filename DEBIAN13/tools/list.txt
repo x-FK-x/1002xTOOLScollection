@@ -3,3 +3,6 @@ ufw
 apache2
 nginx
 kdenlive
+smartmontools
+gparted
+clonezilla
