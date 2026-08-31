@@ -1,4 +1,5 @@
 #!/bin/bash
+sed -i 's/\r//' "$0"
 if ! command -v sudo &> /dev/null; then
     log "sudo not installed. Installing..."
     apt update && apt install -y sudo | tee -a "$LOG_FILE"
