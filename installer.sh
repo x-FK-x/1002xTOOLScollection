@@ -1,9 +1,18 @@
 #!/bin/bash
+if ! command -v sudo &> /dev/null; then
+    log "sudo not installed. Installing..."
+    apt update && apt install -y sudo | tee -a "$LOG_FILE"
+    if ! command -v sudo &> /dev/null; then
+        log "Failed to install sudo. Exiting."
+        exit 1
+    fi
+fi
 
-TARGET_TOOLS_DIR="/etc/dodos/tools"
+
+TARGET_TOOLS_DIR="/etc/DODOS/tools"
 mkdir -p "$TARGET_TOOLS_DIR"
-mkdir -p /etc/dodos/source
-echo "DEBIAN13" > /etc/dodos/tools/osversion.txt
+mkdir -p /etc/DODOS/source
+echo "DEBIAN13" > /etc/DODOS/tools/osversion.txt
 
 
 LOG_FILE="$TARGET_TOOLS_DIR/1002xTOOLS_updater.log"
@@ -22,7 +31,14 @@ if ! command -v unzip &> /dev/null; then
     fi
 fi
 
-
+if ! command -v sudo &> /dev/null; then
+    log "sudo not installed. Installing..."
+    apt update && apt install -y sudo | tee -a "$LOG_FILE"
+    if ! command -v sudo &> /dev/null; then
+        log "Failed to install sudo. Exiting."
+        exit 1
+    fi
+fi
 
 # ==============================
 # 1002xOPERATOR Update (autonom)
@@ -81,7 +97,7 @@ else
 fi
 #-----
 
-LOCAL_CMD_FILE="/etc/dodos/tools/1002xCMD-ver.txt"
+LOCAL_CMD_FILE="/etc/DODOS/tools/1002xCMD-ver.txt"
 REMOTE_URL="https://raw.githubusercontent.com/x-FK-x/1002xCMD/refs/heads/main/version.txt"
 
 if [ -d "/etc/1002xCMD" ]; then
@@ -144,9 +160,9 @@ if ! command -v bc &> /dev/null; then
 fi
 
 # === Version erkennen ===
-if [[ -d /etc/dodos ]]; then
-    VERSION="dodos"
-    SCRIPT_DIR="/etc/dodos"
+if [[ -d /etc/DODOS ]]; then
+    VERSION="DODOS"
+    SCRIPT_DIR="/etc/DODOS"
 elif [[ -d /etc/modos ]]; then
     VERSION="modos"
     SCRIPT_DIR="/etc/modos"
@@ -157,7 +173,7 @@ else
 fi
 
 log "Detected version: $VERSION, SCRIPT_DIR: $SCRIPT_DIR"
-OS_VERSION=$(head -n1 "/etc/dodos/tools/osversion.txt")
+OS_VERSION=$(head -n1 "/etc/DODOS/tools/osversion.txt")
 echo "$OS_VERSION"
 log "OS version: $OS_VERSION"
 
@@ -354,7 +370,47 @@ source /etc/bash.bashrc
 rm -rf "$TMP_DIR"
 log "Temporary files cleaned."
 
-whiptail --title "1002xTOOLS Installer" --msgbox "Installtion  completed. If you want uninstall it, just remove /etc/dodos" 10 50
+# === Create global Desktop Entry ===
+DESKTOP_ENTRY_PATH="/usr/share/applications/1002xTOOLS.desktop"
+if [[ ! -f "$DESKTOP_ENTRY_PATH" ]]; then
+   sudo tee "$DESKTOP_ENTRY_PATH" > /dev/null <<EOF
+[Desktop Entry]
+Name=1002xTOOLS ($VERSION)
+Exec=$SCRIPT_DIR/debui.sh
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=System;
+EOF
+    sudo chmod +x "$DESKTOP_ENTRY_PATH"
+fi
+
+# === Ensure user Desktop shortcut exists ===
+REALUSER=$(logname 2>/dev/null || echo "$SUDO_USER")
+USER_DESKTOP="$HOME/Desktop"
+[[ -z "$REALUSER" ]] && REALUSER=$(whoami)
+USER_DESKTOP=$(eval echo "~$REALUSER/Desktop")
+mkdir -p "$USER_DESKTOP"
+USER_SHORTCUT="$USER_DESKTOP/1002xTOOLS.desktop"
+
+if [[ ! -f "$USER_SHORTCUT" ]]; then
+    cat <<EOF > "$USER_SHORTCUT"
+[Desktop Entry]
+Name=1002xTOOLS ($VERSION)
+Exec=$SCRIPT_DIR/debui.sh
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=System;
+EOF
+    chmod +x "$USER_SHORTCUT"
+    chown "$REALUSER":"$REALUSER" "$USER_SHORTCUT"
+fi
+
+
+
+
+whiptail --title "1002xTOOLS Installer" --msgbox "Installtion  completed. If you want uninstall it, just remove /etc/DODOS" 10 50
 log "Installation completed."
 
 
