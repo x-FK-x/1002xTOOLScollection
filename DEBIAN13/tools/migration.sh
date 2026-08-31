@@ -1,12 +1,10 @@
 #!/bin/bash
 
 # === Detect version directory ===
-if [[ -d /etc/godos ]]; then
-  BASE_DIR="/etc/godos"
+if [[ -d /etc/DODOS ]]; then
+  BASE_DIR="/etc/DODOS"
 elif [[ -d /etc/modos ]]; then
   BASE_DIR="/etc/modos"
-elif [[ -d /etc/wodos ]]; then
-  BASE_DIR="/etc/wodos"
 else
   echo "No valid *odos directory found."
   exit 1
