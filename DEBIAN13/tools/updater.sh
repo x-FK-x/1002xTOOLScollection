@@ -370,7 +370,7 @@ USER_SHORTCUT="$USER_DESKTOP/1002xTOOLS.desktop"
 if [[ ! -f "$USER_SHORTCUT" ]]; then
     cat <<EOF > "$USER_SHORTCUT"
 [Desktop Entry]
-Name=1002xTOOLS ($VERSION)
+Name=1002xTOOLS
 Exec=$SCRIPT_DIR/debui.sh
 Icon=utilities-terminal
 Terminal=true
