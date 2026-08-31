@@ -1,5 +1,5 @@
 #!/bin/bash
-
+sed -i 's/\r//' "$0"
 # Logfile im tools-Ordner
 TARGET_TOOLS_DIR="/etc/DODOS/tools"
 mkdir -p "$TARGET_TOOLS_DIR"
