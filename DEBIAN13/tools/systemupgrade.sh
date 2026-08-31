@@ -33,7 +33,7 @@ while true; do
 
   case "$ACTION" in
     "1")
-      bash /etc/dodos/debui.sh
+      bash /etc/DODOS/debui.sh
       ;;
     "2")
       exit 0

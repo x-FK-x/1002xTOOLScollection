@@ -1,8 +1,8 @@
 #!/bin/bash
 # === Versionserkennung ===
-if [[ -d /etc/dodos ]]; then
-  VERSION="dodos"
-  SCRIPT_DIR="/etc/dodos"
+if [[ -d /etc/DODOS ]]; then
+  VERSION="DODOS"
+  SCRIPT_DIR="/etc/DODOS"
 elif [[ -d /etc/modos ]]; then
   VERSION="modos"
   SCRIPT_DIR="/etc/modos"
@@ -30,17 +30,14 @@ done
 IFS=$'\n' TO_INSTALL=($(sort <<<"${TO_INSTALL[*]}"))
 unset IFS
 
-# === KDE Bloat Cleanup (wird nach Kdenlive-Installation aufgerufen) ===
 cleanup_kde_bloat() {
   local UNWANTED=(
     "kdeconnect"
     "systemsettings"
-    "plasma-systemsettings"
-    "kde-config-gtk-style"
-    "kde-config-screenlocker"
-    "kde-config-sddm"
-    "kde-config-tablet"
-    "drkonqi"
+    "kde-style-breeze-data"
+    "kde-style-breeze-qt5"
+    "kde-style-breeze"
+    "kded6"
   )
 
   local TO_REMOVE=()
@@ -116,7 +113,7 @@ while true; do
     "2" "Exit 1002xTOOLS" 3>&1 1>&2 2>&3)
   case "$ACTION" in
     "1")
-      bash /etc/dodos/debui.sh
+      bash /etc/DODOS/debui.sh
       ;;
     "2")
       exit 0
