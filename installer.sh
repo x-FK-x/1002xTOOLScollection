@@ -161,7 +161,7 @@ fi
 
 # === Version erkennen ===
 if [[ -d /etc/DODOS ]]; then
-    VERSION="DODOS"
+    VERSION="dodos"
     SCRIPT_DIR="/etc/DODOS"
 elif [[ -d /etc/modos ]]; then
     VERSION="modos"
