@@ -33,7 +33,7 @@ while true; do
 
   case "$ACTION" in
     "1")
-      bash /etc/modos/debui.sh
+      bash /etc/MODOS/debui.sh
       ;;
     "2")
       exit 0

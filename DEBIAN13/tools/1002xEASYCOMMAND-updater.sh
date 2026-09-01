@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-INSTALLER="/etc/modos/tools/1002xEASYCOMMAND-installer.sh"
+INSTALLER="/etc/MODOS/tools/1002xEASYCOMMAND-installer.sh"
 MAIN_FILE="/etc/profile.d/1002xEASYCOMMAND.sh"
 BASHRC="/etc/bash.bashrc"
 LOG_FILE="/var/log/1002xEASYCOMMAND_RESET.log"
