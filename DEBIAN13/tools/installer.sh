@@ -4,9 +4,9 @@
 if [[ -d /etc/dodos ]]; then
   VERSION="dodos"
   SCRIPT_DIR="/etc/dodos"
-elif [[ -d /etc/MODOS ]]; then
-  VERSION="MODOS"
-  SCRIPT_DIR="/etc/MODOS"
+elif [[ -d /etc/modos ]]; then
+  VERSION="modos"
+  SCRIPT_DIR="/etc/modos"
 else
   whiptail --title "Updater Error" --msgbox "No valid version directory detected. Exiting." 10 50
   exit 1
@@ -86,7 +86,7 @@ while true; do
 
   case "$ACTION" in
     "1")
-      bash /etc/MODOS/debui.sh
+      bash /etc/modos/debui.sh
       ;;
     "2")
       exit 0
