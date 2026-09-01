@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # === Version Detection ===
-if [[ -d /etc/MODOS ]]; then
+if [[ -d /etc/modos ]]; then
   VERSION="MODOS"
   SCRIPT_DIR="/etc/modos"
-elif [[ -d /etc/DODOS ]]; then
+elif [[ -d /etc/dodos ]]; then
   VERSION="DODOS"
-  SCRIPT_DIR="/etc/DODOS"
+  SCRIPT_DIR="/etc/dodos"
 else
   whiptail --title "1002xTOOLS Error" --msgbox "No valid version directory detected. Exiting." 10 50
   exit 1
@@ -37,6 +37,43 @@ LOCAL_DEV_FILE="$SCRIPT_DIR/dev.txt"
 LOCAL_VERSION=""
 if [[ -f "$LOCAL_DEV_FILE" ]]; then
   LOCAL_VERSION=$(head -n1 "$LOCAL_DEV_FILE")
+fi
+
+# === Create global Desktop Entry ===
+DESKTOP_ENTRY_PATH="/usr/share/applications/1002xTOOLS.desktop"
+if [[ ! -f "$DESKTOP_ENTRY_PATH" ]]; then
+   sudo tee "$DESKTOP_ENTRY_PATH" > /dev/null <<EOF
+[Desktop Entry]
+Name=1002xTOOLS ($VERSION)
+Exec=$SCRIPT_DIR/debui.sh
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=System;
+EOF
+    sudo chmod +x "$DESKTOP_ENTRY_PATH"
+fi
+
+# === Ensure user Desktop shortcut exists ===
+REALUSER=$(logname 2>/dev/null || echo "$SUDO_USER")
+USER_DESKTOP="$HOME/Desktop"
+[[ -z "$REALUSER" ]] && REALUSER=$(whoami)
+USER_DESKTOP=$(eval echo "~$REALUSER/Desktop")
+mkdir -p "$USER_DESKTOP"
+USER_SHORTCUT="$USER_DESKTOP/1002xTOOLS.desktop"
+
+if [[ ! -f "$USER_SHORTCUT" ]]; then
+    cat <<EOF > "$USER_SHORTCUT"
+[Desktop Entry]
+Name=1002xTOOLS ($VERSION)
+Exec=$SCRIPT_DIR/debui.sh
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=System;
+EOF
+    chmod +x "$USER_SHORTCUT"
+    chown "$REALUSER":"$REALUSER" "$USER_SHORTCUT"
 fi
 
 if [[ ! -f "/etc/1002xSHELL/v5.sh" ]]; then

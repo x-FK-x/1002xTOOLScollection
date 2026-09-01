@@ -1,10 +1,9 @@
 #!/bin/bash
-sed -i 's/\r//' "$0"
 
 # Logfile im tools-Ordner
-TARGET_TOOLS_DIR="/etc/DODOS/tools"
+TARGET_TOOLS_DIR="/etc/dodos/tools"
 mkdir -p "$TARGET_TOOLS_DIR"
-mkdir -p /etc/DODOS/source
+mkdir -p /etc/dodos/source
 
 LOG_FILE="$TARGET_TOOLS_DIR/1002xTOOLS_updater.log"
 echo "=== 1002xTOOLS Updater Log ===" > "$LOG_FILE"
@@ -60,24 +59,23 @@ else
         rm -rf "$OP_TMP"
     fi
 fi
-
 #-------
 if [ -f "/etc/profile.d/1002xEASYCOMMAND.sh" ]; then
-    whiptail --title "1002xEASYCOMMAND" --msgbox "1002xEASYCOMMAND is installed. Checking update." 10 50
-    bash "$SCRIPT_DIR/tools/1002xEASYCOMMAND-updater.sh"
-    whiptail --title "1002xEASYCOMMAND" --msgbox "1002xEASYCOMMAND is installed. Finishing update." 10 50
-    sleep 10
+   whiptail --title "1002xEASYCOMMAND" --msgbox "1002xEASYCOMMAND is installed. Checking update." 10 50
+   bash "$SCRIPT_DIR/tools/1002xEASYCOMMAND-updater.sh" 
+      whiptail --title "1002xEASYCOMMAND" --msgbox "1002xEASYCOMMAND is installed. Finishing update." 10 50
+      sleep 10
 else
     whiptail --title "1002xEASYCOMMAND" --msgbox "1002xEASYCOMMAND is not installed. Skipping update." 10 50
 fi
-
 #-----
-LOCAL_CMD_FILE="/etc/DODOS/tools/1002xCMD-ver.txt"
+
+LOCAL_CMD_FILE="/etc/dodos/tools/1002xCMD-ver.txt"
 REMOTE_URL="https://raw.githubusercontent.com/x-FK-x/1002xCMD/refs/heads/main/version.txt"
 
 if [ -d "/etc/1002xCMD" ]; then
     echo "1002xCMD is installed"
-
+    
     if [ ! -f "$LOCAL_CMD_FILE" ]; then
         echo "Local version file not found. Creating a blank one."
         touch "$LOCAL_CMD_FILE"
@@ -94,7 +92,7 @@ if [ -d "/etc/1002xCMD" ]; then
             echo "Versions match ($LOCAL_VERSION). No update needed."
         else
             echo "Update available! Local: '$LOCAL_VERSION' vs Remote: '$REMOTE_VERSION'"
-            bash "$SCRIPT_DIR/tools/1002xCMD-installer.sh"
+            bash "$SCRIPT_DIR/tools/1002xCMD-installer.sh" 
         fi
         sleep 5
     fi
@@ -102,8 +100,9 @@ else
     echo "1002xCMD is not installed. Skipping Update."
     sleep 2
 fi
-
 #----
+
+
 log "Starting updater..."
 
 if ! command -v whiptail &> /dev/null; then
@@ -134,9 +133,9 @@ if ! command -v bc &> /dev/null; then
 fi
 
 # === Version erkennen ===
-if [[ -d /etc/DODOS ]]; then
+if [[ -d /etc/dodos ]]; then
     VERSION="dodos"
-    SCRIPT_DIR="/etc/DODOS"
+    SCRIPT_DIR="/etc/dodos"
 elif [[ -d /etc/modos ]]; then
     VERSION="modos"
     SCRIPT_DIR="/etc/modos"
@@ -147,7 +146,7 @@ else
 fi
 
 log "Detected version: $VERSION, SCRIPT_DIR: $SCRIPT_DIR"
-OS_VERSION=$(head -n1 "/etc/DODOS/tools/osversion.txt")
+OS_VERSION=$(head -n1 "/etc/dodos/tools/osversion.txt")
 echo "$OS_VERSION"
 log "OS version: $OS_VERSION"
 
@@ -159,9 +158,10 @@ elif [ "$OS_VERSION" = "DEBIAN14" ]; then
 elif [ "$OS_VERSION" = "DEBIAN15" ]; then
     log "DEBIAN 15"
 else
-    log "Unknown Version: $OS_VERSION"
+    log "Unkown Version: $OS_VERSION"
     exit 0
 fi
+
 
 # === Versionsnormalisierung (Kommazahlen-kompatibel) ===
 normalize_version() {
@@ -232,12 +232,7 @@ dos2unix "$TMP_DIR/dev.txt" 2>/dev/null
 dos2unix "$LOCAL_DEV_FILE" 2>/dev/null
 
 REPO_VERSION=$(normalize_version "$(head -n1 "$TMP_DIR/dev.txt")")
-
-if [[ -f "$LOCAL_DEV_FILE" ]]; then
-    LOCAL_VERSION=$(normalize_version "$(head -n1 "$LOCAL_DEV_FILE")")
-else
-    LOCAL_VERSION=$(normalize_version "0")
-fi
+LOCAL_VERSION=$(normalize_version "$( [[ -f "$LOCAL_DEV_FILE" ]] && head -n1 "$LOCAL_DEV_FILE" || echo "0" )")
 
 log "Local version: $LOCAL_VERSION"
 log "Repo version: $REPO_VERSION"
@@ -261,18 +256,17 @@ fi
 cp -f "$TMP_DIR/dev.txt" "$LOCAL_DEV_FILE"
 log "Copied dev.txt to $LOCAL_DEV_FILE"
 
-# debui.sh
+# debui.sh 
 if [[ -f "$EXTRACTED_DIR/debui.sh" ]]; then
     cp -f "$EXTRACTED_DIR/debui.sh" "$SCRIPT_DIR/debui.sh"
     chmod +x "$SCRIPT_DIR/debui.sh"
-    dos2unix "$SCRIPT_DIR/debui.sh" 2>/dev/null
     log "Copied debui.sh to $SCRIPT_DIR/debui.sh"
 else
-    log "debui.sh not found in folder."
+    log "DEBIANui.sh not found in folder."
     whiptail --title "Updater" --msgbox "debui.sh not found in folder." 10 50
 fi
 
-# motd
+# motd 
 if [[ -f "$EXTRACTED_DIR/tools/motd" ]]; then
     cp -f "$EXTRACTED_DIR/tools/motd" "$SCRIPT_DIR/tools/motd"
     log "Copied motd to $SCRIPT_DIR/tools/motd"
@@ -281,17 +275,17 @@ else
     whiptail --title "Updater" --msgbox "motd not found in folder." 10 50
 fi
 
-# 1002xSHELL-installer.sh
+
+# osversion 
 if [[ -f "$EXTRACTED_DIR/tools/1002xSHELL-installer.sh" ]]; then
     cp -f "$EXTRACTED_DIR/tools/1002xSHELL-installer.sh" "$SCRIPT_DIR/tools/1002xSHELL-installer.sh"
-    dos2unix "$SCRIPT_DIR/tools/1002xSHELL-installer.sh" 2>/dev/null
     log "Copied 1002xSHELL-installer.sh to $SCRIPT_DIR/tools/1002xSHELL-installer.sh"
 else
     log "1002xSHELL-installer.sh not found in folder."
     whiptail --title "Updater" --msgbox "1002xSHELL-installer.sh not found in folder." 10 50
 fi
 
-# list.txt
+# list 
 if [[ -f "$EXTRACTED_DIR/tools/list.txt" ]]; then
     cp -f "$EXTRACTED_DIR/tools/list.txt" "$SCRIPT_DIR/tools/list.txt"
     log "Copied list.txt to $SCRIPT_DIR/tools/list.txt"
@@ -306,14 +300,12 @@ if [[ -d "$EXTRACTED_DIR/tools" ]]; then
         [ -f "$file" ] || continue
         cp -f "$file" "$TARGET_TOOLS_DIR/"
         chmod +x "$TARGET_TOOLS_DIR/$(basename "$file")"
-        dos2unix "$TARGET_TOOLS_DIR/$(basename "$file")" 2>/dev/null
         log "Copied $file to $TARGET_TOOLS_DIR/"
     done
 else
     log "No tools folder found in DEBIAN13"
 fi
 
-# 1002xCMD-ver.txt
 if [[ -f "$EXTRACTED_DIR/tools/1002xCMD-ver.txt" ]]; then
     cp -f "$EXTRACTED_DIR/tools/1002xCMD-ver.txt" "$SCRIPT_DIR/tools/1002xCMD-ver.txt"
     log "Copied 1002xCMD-ver.txt to $SCRIPT_DIR/tools/1002xCMD-ver.txt"
@@ -322,7 +314,6 @@ else
     whiptail --title "Updater" --msgbox "1002xCMD-ver.txt not found in folder." 10 50
 fi
 
-# resolv.conf
 if [[ -f "$EXTRACTED_DIR/tools/resolv.conf" ]]; then
     cp -f "$EXTRACTED_DIR/tools/resolv.conf" "$SCRIPT_DIR/tools/resolv.conf"
     log "Copied resolv.conf to $SCRIPT_DIR/tools/resolv.conf"
@@ -353,44 +344,9 @@ source /etc/bash.bashrc
 rm -rf "$TMP_DIR"
 log "Temporary files cleaned."
 
-# === Create global Desktop Entry ===
-DESKTOP_ENTRY_PATH="/usr/share/applications/1002xTOOLS.desktop"
-if [[ ! -f "$DESKTOP_ENTRY_PATH" ]]; then
-    sudo tee "$DESKTOP_ENTRY_PATH" > /dev/null <<'DESKTOPEOF'
-[Desktop Entry]
-Name=1002xTOOLS
-Icon=utilities-terminal
-Terminal=true
-Type=Application
-Categories=System;
-DESKTOPEOF
-    echo "Exec=$SCRIPT_DIR/debui.sh" | sudo tee -a "$DESKTOP_ENTRY_PATH" >/dev/null
-    sudo chmod +x "$DESKTOP_ENTRY_PATH"
-fi
-
-# === Ensure user Desktop shortcut exists ===
-REALUSER=$(logname 2>/dev/null || echo "$SUDO_USER")
-[[ -z "$REALUSER" ]] && REALUSER=$(whoami)
-USER_DESKTOP=$(eval echo "~$REALUSER/Desktop")
-mkdir -p "$USER_DESKTOP"
-USER_SHORTCUT="$USER_DESKTOP/1002xTOOLS.desktop"
-
-if [[ ! -f "$USER_SHORTCUT" ]]; then
-    cat > "$USER_SHORTCUT" <<'DESKTOPEOF'
-[Desktop Entry]
-Name=1002xTOOLS
-Icon=utilities-terminal
-Terminal=true
-Type=Application
-Categories=System;
-DESKTOPEOF
-    echo "Exec=$SCRIPT_DIR/debui.sh" >> "$USER_SHORTCUT"
-    chmod +x "$USER_SHORTCUT"
-    chown "$REALUSER":"$REALUSER" "$USER_SHORTCUT"
-fi
-
 whiptail --title "1002xTOOLS Updater" --msgbox "Update completed successfully to version $REPO_VERSION." 10 50
 log "Update completed successfully to version $REPO_VERSION."
+
 
 # === Rückkehrmenü ===
 while true; do

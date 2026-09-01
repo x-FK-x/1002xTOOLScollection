@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # === Versionserkennung ===
-if [[ -d /etc/DODOS ]]; then
-  VERSION="DODOS"
-  SCRIPT_DIR="/etc/DODOS"
+if [[ -d /etc/dodos ]]; then
+  VERSION="dodos"
+  SCRIPT_DIR="/etc/dodos"
 elif [[ -d /etc/modos ]]; then
   VERSION="modos"
   SCRIPT_DIR="/etc/modos"
@@ -85,7 +85,7 @@ while true; do
 
   case "$ACTION" in
     "1")
-      bash /etc/DODOS/debui.sh
+      bash /etc/dodos/debui.sh
       ;;
     "2")
       exit 0
