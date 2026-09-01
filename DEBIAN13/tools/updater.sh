@@ -141,7 +141,7 @@ if [[ -d /etc/DODOS ]]; then
     SCRIPT_DIR="/etc/DODOS"
 elif [[ -d /etc/modos ]]; then
     VERSION="modos"
-    SCRIPT_DIR="/etc/modos"
+    SCRIPT_DIR="/etc/MODOS"
 else
     log "No valid version directory detected. Exiting."
     whiptail --title "Updater Error" --msgbox "No valid version directory detected. Exiting." 10 50
