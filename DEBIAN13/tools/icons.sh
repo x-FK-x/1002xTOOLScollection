@@ -4,11 +4,11 @@
 REALUSER=$(logname 2>/dev/null || echo "$SUDO_USER")
 USERHOME=$(eval echo "~$REALUSER")
 
-LIST="/etc/DODOS/tools/list.txt"
+LIST="/etc/dodos/tools/list.txt"
 DESKTOP_DIR="$USERHOME/Desktop"
 
 if [[ ! -f "$LIST" ]]; then
-    whiptail --title "Error" --msgbox "The file /etc/DODOS/tools/list.txt was not found!" 10 50
+    whiptail --title "Error" --msgbox "The file /etc/dodos/tools/list.txt was not found!" 10 50
     exit 1
 fi
 
