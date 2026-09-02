@@ -1,8 +1,5 @@
-You have to curl the installer. 
+This is the old repo. 
 
-e.g 
-curl https://raw.githubusercontent.com/x-FK-x/1002xTOOLScollection/refs/heads/main/installer.sh > temp.sh
+Use the new one.
 
-than just start the skript
-
-bash temp.sh
+https://github.com/x-FK-x/1002xTOOLS
