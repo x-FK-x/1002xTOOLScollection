@@ -49,7 +49,7 @@ DESKTOP_ENTRY_PATH="/usr/share/applications/1002xTOOLS.desktop"
 if [[ ! -f "$DESKTOP_ENTRY_PATH" ]]; then
    sudo tee "$DESKTOP_ENTRY_PATH" > /dev/null <<EOF
 [Desktop Entry]
-Name=1002xTOOLS ($VERSION)
+Name=1002xTOOLS
 Exec=$SCRIPT_DIR/debui.sh
 Icon=utilities-terminal
 Terminal=true
@@ -70,7 +70,7 @@ USER_SHORTCUT="$USER_DESKTOP/1002xTOOLS.desktop"
 if [[ ! -f "$USER_SHORTCUT" ]]; then
     cat <<EOF > "$USER_SHORTCUT"
 [Desktop Entry]
-Name=1002xTOOLS ($VERSION)
+Name=1002xTOOLS
 Exec=$SCRIPT_DIR/debui.sh
 Icon=utilities-terminal
 Terminal=true
