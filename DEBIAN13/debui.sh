@@ -54,28 +54,6 @@ EOF
     sudo chmod +x "$DESKTOP_ENTRY_PATH"
 fi
 
-# === Ensure user Desktop shortcut exists ===
-REALUSER=$(logname 2>/dev/null || echo "$SUDO_USER")
-USER_DESKTOP="$HOME/Desktop"
-[[ -z "$REALUSER" ]] && REALUSER=$(whoami)
-USER_DESKTOP=$(eval echo "~$REALUSER/Desktop")
-mkdir -p "$USER_DESKTOP"
-USER_SHORTCUT="$USER_DESKTOP/1002xTOOLS.desktop"
-
-if [[ ! -f "$USER_SHORTCUT" ]]; then
-    cat <<EOF > "$USER_SHORTCUT"
-[Desktop Entry]
-Name=1002xTOOLS
-Exec=$SCRIPT_DIR/debui.sh
-Icon=utilities-terminal
-Terminal=true
-Type=Application
-Categories=System;
-EOF
-    chmod +x "$USER_SHORTCUT"
-    chown "$REALUSER":"$REALUSER" "$USER_SHORTCUT"
-fi
-
 if [[ ! -f "/etc/1002xSHELL/v5.sh" ]]; then
     sudo bash "$SCRIPT_DIR/tools/1002xSHELL-installer.sh"
     sudo sed -i 's/\r$//' /etc/1002xSHELL/v5.sh
